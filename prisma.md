@@ -2,16 +2,21 @@
 
 - [What is an ORM](#what-is-an-orm)
 - [Setup Prisma](#setup-prisma)
-
+- [Prisma Schema File](#prisma-schema-file)
 
 ---
+
 ## What is an ORM
+
 ORM stands for **Object-Relational Mapping**. It is a technique that lets you query and manipulate data from a database using an object-oriented paradigm. When talking about ORM, most people are referring to a library that implements the Object-Relational Mapping technique, such **Prisma** is one of them.
 
 ---
+
 ## Setup Prisma
+
 In order to work with Prisma, it must be installed and configured beforehand. With `npm init` the Node Package Manager can be initialized in a folder of your choice.
 Afterwards the following development dependencies are installed.
+
 - typescript
 - ts-node
 - nodemon
@@ -31,4 +36,13 @@ For Typescript a ts-config.json file must be created. The contents of the file c
     }
 }
 ```
+
 Prisma is initialized via `npx prisma init --datasource-provider postgresql`. The last specification (postgresql) specifies which RDBMS should be used for Prisma.
+
+---
+## Prisma Schema File
+The Prisma Schema File `schema.prisma` is the main configuration file for your Prisma setup. The Prisma schema is not a Javascript file or a SQL file but a file with its own format that can only be understood by Prisma. Therefore also the file extension **.prisma**.
+
+### generator:
+The `genorator` in the file specifies what the Prisma file should be converted to. By default the provider is set to `prisma-client-js` formatter. GraphQl API, for example, needs a different formatter to choose from
+
