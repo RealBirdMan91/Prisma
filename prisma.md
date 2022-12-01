@@ -4,6 +4,7 @@
 - [Setup Prisma](#setup-prisma)
 - [Prisma Schema File](#prisma-schema-file)
 - [Prisma Migrate](#prisma-migrate)
+- [Prisma Client](#prisma-client)
 
 ---
 
@@ -68,3 +69,19 @@ This command does two things:
 
 1. It creates a new SQL migration file for this migration
 2. It runs the SQL migration file against the database
+
+As soon as the npx command is executed the text message **Generated Prisma Client (4.7.0 | library) to .\node_modules\@prisma\client in 74ms** is printed to console.<br> This means in our node_modules folder a new client folder is created which contains javascript files they allow us to interact with the database. That these are javascript files is due to the `prisma-client-js` formatter in the schema.prisma file.
+
+---
+## Prisma Client
+As described in the previous chapter, `prisma-client-js` is needed to interact with our database. But this must first be installed via `npm install @prisma/client`.
+> Notice that the install command automatically invokes prisma generate for you which reads your Prisma schema and generates a version of Prisma Client that is tailored to your models.<br><br>
+Whenever you make changes to your Prisma schema in the future, you manually need to invoke prisma generate in order to accommodate the changes in your Prisma Client API.
+
+After installation, the client can be used by importing it and creating a new `PrismaClient` instance.
+
+```Typescript
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+```
