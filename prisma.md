@@ -5,7 +5,11 @@
 - [Prisma Schema File](#prisma-schema-file)
 - [Prisma Migrate](#prisma-migrate)
 - [Prisma Client](#prisma-client)
+- [Model](#model)
+  - [Field Types](#field-types)
 
+
+@TODO overwork the shit till model
 ---
 
 ## What is an ORM
@@ -102,3 +106,27 @@ main()
   });
 
 ```
+---
+
+## Model
+A `model` represents a table in a database. 
+The name of the model can be freely chosen and will later be the name of the table in the database. Each row within the model represents a field in the DB table. <br>
+**A model row can be divided into four parts:**
+1. name (id, name, age)
+2. type of Field (String, String, Number)
+3. field modifier (?)
+4. attributes (@id @default(uuid()))
+
+```
+model User {
+  id       String       @id @default(uuid())
+  name     String
+  age      Number?      
+}
+```
+
+The command `npx prisma migrate dev --name init` is used to create the desired tables in the database based on the `model`.
+
+---
+
+## Field Types
