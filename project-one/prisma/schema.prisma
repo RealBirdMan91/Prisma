@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model represent the table in a Database
+// each model row represents a db field
+// a field is divided in four parts
+// 1. name 2. Type of Field 3. (optional) field modifier 4. attributes
+
 model User {
   id       String       @id @default(uuid())
   name     String
