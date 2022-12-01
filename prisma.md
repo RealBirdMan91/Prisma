@@ -53,3 +53,18 @@ Care must be taken to ensure that the username, password, port and database name
 
 > DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 ---
+## Prisma Migrate
+Migrations can be realized via a `model` in Prisma. These are needed to create tables in a database and to define which values the database fields accept. A first simple `model` could look like this. 
+```
+model User {
+  id Int @id @default(autoincrement())
+  name String 
+}
+```
+To map your data model to the database schema, you need to use the prisma migrate CLI commands:
+> npx prisma migrate dev --name init
+
+This command does two things:
+
+1. It creates a new SQL migration file for this migration
+2. It runs the SQL migration file against the database
