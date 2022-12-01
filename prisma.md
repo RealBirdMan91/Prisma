@@ -3,6 +3,7 @@
 - [What is an ORM](#what-is-an-orm)
 - [Setup Prisma](#setup-prisma)
 - [Prisma Schema File](#prisma-schema-file)
+- [Prisma Migrate](#prisma-migrate)
 
 ---
 
@@ -44,5 +45,11 @@ Prisma is initialized via `npx prisma init --datasource-provider postgresql`. Th
 The Prisma Schema File `schema.prisma` is the main configuration file for your Prisma setup. The Prisma schema is not a Javascript file or a SQL file but a file with its own format that can only be understood by Prisma. Therefore also the file extension **.prisma**.
 
 ### generator:
-The `genorator` in the file specifies what the Prisma file should be converted to. By default the provider is set to `prisma-client-js` formatter. GraphQl API, for example, needs a different formatter to choose from
+The `genorator` in the file specifies what the Prisma file should be converted to. By default the provider is set to `prisma-client-js` formatter. GraphQl API, for example, needs a different formatter to choose from.
+### datasource:
+datasource, on the other hand, is relatively self-explanatory. It specifies which RDBMS is used, in our case PostgreSQL.
+The `url` specifies the database link. This can be found and changed in the **.env** file.
+Care must be taken to ensure that the username, password, port and database name are specified correctly.
 
+> DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+---
