@@ -26,7 +26,9 @@
     - [cuid()](#cuid)
     - [uuid()](#uuid)
     - [now()](#now)
+- [enum](#enum)
 - [Relations](#relations)
+  - [One to One Relations](#one-to-one-relations)
 
 ## What is an ORM
 
@@ -502,6 +504,60 @@ model User {
 
 ---
 
-## Relations
+## enum
+
+Defines an enum
+
+```Prisma
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id   Int  @id @default(autoincrement())
+  role Role
+}
+```
 
 ---
+
+## Relations
+
+A relation is a connection between two models in the Prisma schema.
+
+The following Prisma schema defines a one-to-many relation between the User and Post models. The fields involved in defining the relation are highlighted:
+
+```Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[]
+}
+
+model Post {
+  id       Int  @id @default(autoincrement())
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+}
+
+```
+
+In the Prism schema, the foreign key-primary key relationship is represented by the `@relation` attribute for the author field.
+
+### Types of relations
+
+There are three different types (or cardinalities) of relations in Prisma:
+
+- One-to-one (also called 1-1-relation)
+- One-to-many (also called 1-n-relation)
+- Many-to-many (also called m-n-relation)
+
+The following Prisma schema includes every type of relation:
+
+- 1-1: User ↔ Profile
+- 1-n: User ↔ Post
+- m-n: Post ↔ Category
+
+---
+
+## One to One Relations
