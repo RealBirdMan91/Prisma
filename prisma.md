@@ -17,6 +17,12 @@
     - [@id](#id)
     - [@default](#default)
     - [@unique](#unique)
+    - [@map](#map)
+    - [@updatedAt](#updatedat)
+    - [@ignore](#ignore)
+    - [@relation](#relation)
+ - [Relations](#relations)
+
 
 ## What is an ORM
 
@@ -355,7 +361,9 @@ model User {
 ```
 
 ## @@unique
+
 Defines a compound unique constraint for the specified fields.
+
 ```Prisma
 model User {
   firstname Int
@@ -366,4 +374,58 @@ model User {
 }
 ```
 
+---
+
+## @map
+
+Maps a field name or enum value from the Prisma schema to a column or document field with a different name in the database. If you do not use `@map`, the Prisma field name matches the column name or document field name exactly.
+
+```Prisma
+model User {
+  id        Int    @id @default(autoincrement())
+  firstName String @map("first_name")
+}
+```
+
+---
+
+## @updatedAt
+Automatically stores the time when a record was last updated. If you do not supply a time yourself, the Prisma Client will automatically set the value for fields with this attribute.
+
+- Compatible with DateTime fields
+
+```Prisma
+model Post {
+  id        String   @id
+  updatedAt DateTime @updatedAt
+}
+```
+
+## @ignore
+Add `@ignore` to a field that you want to exclude from the Prisma Client (for example, a field that you do not want Prisma users to update). Ignored fields are excluded from the generated Prisma Client. The model's create method is disabled when doing this for required fields with no `@default` (because the database cannot create an entry without that data).
+
+```
+model User {
+  id    Int    @id
+  name  String
+  email String @ignore // this field will be excluded
+}
+```
+
+## @relation
+Defines meta information about the relation.
+- Corresponding database types: `FOREIGN KEY` / `REFERENCES`
+
+```Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[]
+}
+
+model Post {
+  id       Int  @id @default(autoincrement())
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int // relation scalar field  (used in the `@relation` attribute above)
+}
+```
 ---
