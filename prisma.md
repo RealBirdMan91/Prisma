@@ -21,8 +21,12 @@
     - [@updatedAt](#updatedat)
     - [@ignore](#ignore)
     - [@relation](#relation)
- - [Relations](#relations)
-
+  - [Attribute functions](#attribute-functions)
+    - [autoincrement()](#autoincrement)
+    - [cuid()](#cuid)
+    - [uuid()](#uuid)
+    - [now()](#now)
+- [Relations](#relations)
 
 ## What is an ORM
 
@@ -390,6 +394,7 @@ model User {
 ---
 
 ## @updatedAt
+
 Automatically stores the time when a record was last updated. If you do not supply a time yourself, the Prisma Client will automatically set the value for fields with this attribute.
 
 - Compatible with DateTime fields
@@ -402,6 +407,7 @@ model Post {
 ```
 
 ## @ignore
+
 Add `@ignore` to a field that you want to exclude from the Prisma Client (for example, a field that you do not want Prisma users to update). Ignored fields are excluded from the generated Prisma Client. The model's create method is disabled when doing this for required fields with no `@default` (because the database cannot create an entry without that data).
 
 ```
@@ -413,7 +419,9 @@ model User {
 ```
 
 ## @relation
+
 Defines meta information about the relation.
+
 - Corresponding database types: `FOREIGN KEY` / `REFERENCES`
 
 ```Prisma
@@ -428,4 +436,72 @@ model Post {
   authorId Int // relation scalar field  (used in the `@relation` attribute above)
 }
 ```
+
+> more detail in the [Relations section](#relations)
+
+---
+
+## Attribute functions
+
+## autoincrement()
+
+Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence.
+
+```Prisma
+model User {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+```
+
+---
+
+## cuid()
+
+Generate a globally unique identifier based on the cuid spec.
+
+- Compatible with String
+
+```Prisma
+model User {
+  id   String @id @default(cuid())
+  name String
+}
+```
+
+---
+
+## uuid
+
+Generate a globally unique identifier based on the UUID spec, version 4 (random).
+
+- Compatible with String
+
+```Prisma
+model User {
+  id   String @id @default(uuid())
+  name String
+}
+```
+
+---
+
+## now()
+
+Set a timestamp of the time when a record is created.
+
+- Compatible with DateTime
+
+```Prisma
+model User {
+  id   String @id @default(uuid())
+  name String
+  createdAt DateTime @default(now())
+}
+```
+
+---
+
+## Relations
+
 ---
