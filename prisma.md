@@ -29,6 +29,7 @@
 - [enum](#enum)
 - [Relations](#relations)
   - [One to One Relations](#one-to-one-relations)
+  - [One to many relations](#one-to-many-relations)
 
 ## What is an ORM
 
@@ -561,3 +562,63 @@ The following Prisma schema includes every type of relation:
 ---
 
 ## One to One Relations
+
+One-to-one (1-1) relations refer to relations where at most one record can be connected on both sides of the relation.
+
+**In the example below, there is a one-to-one relation between User and Profile.**
+
+```Prisma
+model User {
+  id      Int      @id @default(autoincrement())
+  profile Profile?
+}
+
+model Profile {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+```
+
+You can also reference a different field. In this case, you need to mark the field with the `@unique` attribute, to guarantee that there is only a single User connected to each Profile. In the following example, the user field references an email field in the User model, which is marked with the `@unique` attribute.
+
+```Prisma
+model User {
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  profile Profile?
+}
+
+model Profile {
+  id        Int    @id @default(autoincrement())
+  user      User   @relation(fields: [userEmail], references: [email])
+  userEmail String @unique
+}
+```
+
+### Multi-field relations in relational databases
+
+In relational databases only, you can also define use multi-field IDs to define a 1-1 relation
+
+```Prisma
+model User {
+  firstName String
+  lastName  String
+  profile   Profile?
+
+  @@id([firstName, lastName])
+}
+
+model Profile {
+  id            Int    @id @default(autoincrement())
+  user          User   @relation(fields: [userFirstName, userLastName], references: [firstName, lastName])
+  userFirstName String
+  userLastName  String
+
+  @@unique([userFirstName, userLastName])
+}
+```
+
+---
+
+## One to many relations
