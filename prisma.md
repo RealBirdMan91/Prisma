@@ -12,9 +12,7 @@
     - [Float Attributes](#float-attributes)
     - [Decimal Attributes](#decimal-attributes)
     - [DateTime Attributes](#datetime-attributes)
-  - [Field Type modifiers](#field-type-modifiers)  
-
-## @TODO overwork the shit till model
+  - [Field Type modifiers](#field-type-modifiers)
 
 ## What is an ORM
 
@@ -223,10 +221,12 @@ A default data type is assigned to the field types (see above). This can be chan
 ---
 
 ## Field Type modifiers
+
 Field type modifiers are quick to understand. This is because only two exist.
 
 **The [ ] modifier:** with the `[]` it is indicated that this field type is a list i.e. array.
 This will be very important later when it comes to building relationships to other tables.
+
 ```
 model User {
   id             Int      @id @default(autoincrement())
@@ -235,10 +235,12 @@ model User {
 ```
 
 **The ? modifier:** With the `?` modifier it is possible to make a fiel optional. Notice that you can't set a list array optional.
+
 ```
 model User {
   id   Int     @id @default(autoincrement())
   name String?
 }
 ```
+
 ---
