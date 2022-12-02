@@ -8,6 +8,11 @@
 - [Model](#model)
   - [Field Types](#field-types)
     - [String Attributes](#string-attributes)
+    - [Int Attributes](#int-attributes)
+    - [Float Attributes](#float-attributes)
+    - [Decimal Attributes](#decimal-attributes)
+    - [DateTime Attributes](#datetime-attributes)
+  - [Field Type modifiers](#field-type-modifiers)  
 
 ## @TODO overwork the shit till model
 
@@ -151,7 +156,7 @@ The Field types are needed to specify which value may be entered into the field 
 
 > Field Types can differ depending on the RDBMS you are using with Prisma. In this chapter, the most common Field Types for PostgreSQL are discussed. Special Field Types or Field Types for another RDBMS can be looked up [here](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string).
 
-**The field types in Prism can be divided into:**
+**The field types in Prisma can be divided into:**
 
 | Field Type | Default       |
 | ---------- | ------------- |
@@ -200,10 +205,10 @@ A default data type is assigned to the field types (see above). This can be chan
 
 ## Decimal Attributes
 
-| Native Database Type | Prisma Attribute |
-| -------------------- | ---------------- |
+| Native Database Type | Prisma Attribute  |
+| -------------------- | ----------------- |
 | DECIMAL              | @db.Decimal(p, s) |
-| MONEY                | @db.Money        |
+| MONEY                | @db.Money         |
 
 ---
 
@@ -211,6 +216,10 @@ A default data type is assigned to the field types (see above). This can be chan
 
 | Native Database Type | Prisma Attribute |
 | -------------------- | ---------------- |
-| TIMESTAMP(x)             |    @db.Timestamp(x)    |
-| DATE               | @db.Date       |
-| TIME(x)               | @db.Time       |
+| TIMESTAMP(x)         | @db.Timestamp(x) |
+| DATE                 | @db.Date         |
+| TIME(x)              | @db.Time         |
+
+---
+
+## Field Type modifiers
