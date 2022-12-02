@@ -13,6 +13,10 @@
     - [Decimal Attributes](#decimal-attributes)
     - [DateTime Attributes](#datetime-attributes)
   - [Field Type modifiers](#field-type-modifiers)
+  - [Attributes](#attributes)
+    - [@id](#id)
+    - [@default](#default)
+    - [@unique](#unique)
 
 ## What is an ORM
 
@@ -71,7 +75,7 @@ Care must be taken to ensure that the username, password, port and database name
 
 Migrations can be realized via a `model` in Prisma. These are needed to create tables in a database and to define which values the database fields accept. A first simple `model` could look like this.
 
-```
+```Prisma
 model User {
   id Int @id @default(autoincrement())
   name String
@@ -136,7 +140,7 @@ The name of the model can be freely chosen and will later be the name of the tab
 3. field modifier (?)
 4. attributes (@id @default(uuid()))
 
-```
+```Prisma
 model User {
   id       String       @id @default(uuid())
   name     String
@@ -227,7 +231,7 @@ Field type modifiers are quick to understand. This is because only two exist.
 **The [ ] modifier:** with the `[]` it is indicated that this field type is a list i.e. array.
 This will be very important later when it comes to building relationships to other tables.
 
-```
+```Prisma
 model User {
   id             Int      @id @default(autoincrement())
   favoriteColors String[]
@@ -236,10 +240,129 @@ model User {
 
 **The ? modifier:** With the `?` modifier it is possible to make a fiel optional. Notice that you can't set a list array optional.
 
-```
+```Prisma
 model User {
   id   Int     @id @default(autoincrement())
   name String?
+}
+```
+
+---
+
+## Attributes
+
+Attributes modify the behavior of a field or block (e.g. models). There are two ways to add attributes to your data model:
+
+- Field attributes are prefixed with `@`
+- Block attributes are prefixed with `@@`
+
+---
+
+## @id
+
+Defines a single-field ID on the model and Cannot be optional.
+
+- Corresponding database type: `PRIMARY KEY`
+- Can be annotated with a `@default()` value that uses functions to auto-generate an ID:
+  - `autoincrement()`
+  - `cuid()`
+  - `uuid()`
+- Can be defined on any scalar field (String, Int, enum)
+
+```Prisma
+model User {
+  id       String       @id @default(uuid())
+}
+```
+
+## @@id
+
+Defines a multi-field ID (composite ID) on the model.
+
+- Corresponding database type: `PRIMARY KEY`
+- Can be annotated with a @default() value that uses functions to auto-generate an ID
+- Cannot be optional
+- Can be defined on any scalar field (String, Int, enum)
+- Cannot be defined on a relation field
+- The name of the composite ID field in Prisma Client has the following pattern: field1_field2_field3
+
+```Prisma
+model User {
+  firstName String
+  lastName  String
+  email     String  @unique
+  isAdmin   Boolean @default(false)
+
+  @@id([firstName, lastName])
+}
+```
+
+---
+
+## @default
+
+Defines a default value for a field.
+
+- Corresponding database type: `DEFAULT`
+- Default values can be a static value (4, "hello") or one of the following functions:
+  - autoincrement()
+  - cuid()
+  - uuid()
+  - now()
+
+```Prisma
+model User {
+  email  String @unique
+  number Float  @default(1.1)
+}
+```
+
+**Default Enum Types:**
+
+```Prisma
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  name    String?
+  role    Role     @default(USER)
+  posts   Post[]
+  profile Profile?
+}
+```
+
+---
+
+## @unique
+
+Defines a unique constraint for this field.
+
+- Corresponding database type: `UNIQUE`
+- A field annotated with `@unique` can be optional or required
+- A model can have any number of unique constraints
+- Can be defined on any scalar field
+- Cannot be defined on a relation field
+
+```Prisma
+model User {
+  email String @unique
+  name  String
+}
+```
+
+## @@unique
+Defines a compound unique constraint for the specified fields.
+```Prisma
+model User {
+  firstname Int
+  lastname  Int
+  id        Int
+
+  @@unique([firstname, lastname, id])
 }
 ```
 
