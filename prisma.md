@@ -33,6 +33,7 @@
   - [Many to many relations](#many-to-many-relations)
     - [Explicit many to many relations](#explicit-many-to-many-relations)
     - [Implicit many to many relations](#implicit-many-to-many-relations)
+  - [Self relations](#self-relations)
 
 ## What is an ORM
 
@@ -744,3 +745,7 @@ model Category {
   posts Post[]
 }
 ```
+
+---
+
+## Self relations
