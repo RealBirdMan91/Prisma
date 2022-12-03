@@ -32,6 +32,7 @@
   - [One to many relations](#one-to-many-relations)
   - [Many to many relations](#many-to-many-relations)
     - [Explicit many to many relations](#explicit-many-to-many-relations)
+    - [Implicit many to many relations](#implicit-many-to-many-relations)
 
 ## What is an ORM
 
@@ -689,3 +690,57 @@ Many-to-many (m-n) relations refer to relations where zero or more records on on
 > In relational databases, m-n-relations are typically modelled via relation tables. m-n-relations can be either explicit or implicit in the Prisma schema.
 
 ## Explicit many to many relations
+
+In an explicit many-to-many relation, the relation table is represented as a model in the Prisma schema and can be used in queries. Explicit many-to-many relations define three models
+
+- Two models that have a many-to-many relation, such as Category and Post
+- One model that represents the relation table, such as CategoriesOnPosts (also sometimes called JOIN table) in the underlying database.
+
+In this example, the model representing the relation table defines additional fields that describe the Post/Category relationship - who assigned the category (assignedBy), and when the category was assigned (assignedAt)
+
+```Prisma
+model Post {
+  id         Int                 @id @default(autoincrement())
+  title      String
+  categories CategoriesOnPosts[]
+}
+
+model Category {
+  id    Int                 @id @default(autoincrement())
+  name  String
+  posts CategoriesOnPosts[]
+}
+
+model CategoriesOnPosts {
+  post       Post     @relation(fields: [postId], references: [id])
+  postId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([postId, categoryId])
+}
+```
+
+---
+
+## Implicit many-to-many relations
+
+Implicit many-to-many relations define relation fields as lists on both sides of the relation. Although the relation table exists in the underlying database.
+
+**In the example below, there's one implicit m-n-relation between Post and Category**
+
+```Prisma
+model Post {
+  id         Int        @id @default(autoincrement())
+  title      String
+  categories Category[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  posts Post[]
+}
+```
