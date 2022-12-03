@@ -113,7 +113,7 @@ As soon as the npx command is executed the text message **Generated Prisma Clien
 As described in the previous chapter, `prisma-client-js` is needed to interact with our database. But this must first be installed via `npm install @prisma/client`.
 
 > Notice that the install command automatically invokes prisma generate for you which reads your Prisma schema and generates a version of Prisma Client that is tailored to your models.<br><br>
-> Whenever you make changes to your Prisma schema in the future, you manually need to invoke prisma generate in order to accommodate the changes in your Prisma Client API.
+> Whenever you make changes to your Prisma schema in the future, you manually need to invoke prisma generate in order to accommodate the changes in your Prisma Client API (`npx prisma generate`).
 
 After installation, the client can be used by importing it and creating a new `PrismaClient` instance.
 
@@ -194,8 +194,8 @@ A default data type is assigned to the field types (see above). This can be chan
 | Native Database Type | Prisma Attribute |
 | -------------------- | ---------------- |
 | TEXT                 | @db.Text         |
-| CHAR(x)              | @db.CHAR(x)      |
-| VARCHAR(x)           | @db.VarChar(x)   |
+| CHAR(X)              | @db.CHAR(X)      |
+| VARCHAR(X)           | @db.VarChar(X)   |
 | UUID                 | @db.Uuid         |
 
 ---
@@ -231,9 +231,9 @@ A default data type is assigned to the field types (see above). This can be chan
 
 | Native Database Type | Prisma Attribute |
 | -------------------- | ---------------- |
-| TIMESTAMP(x)         | @db.Timestamp(x) |
+| TIMESTAMP(X)         | @db.Timestamp(X) |
 | DATE                 | @db.Date         |
-| TIME(x)              | @db.Time         |
+| TIME(X)              | @db.Time(X)      |
 
 ---
 
@@ -251,7 +251,7 @@ model User {
 }
 ```
 
-**The ? modifier:** With the `?` modifier it is possible to make a fiel optional. Notice that you can't set a list array optional.
+**The ? modifier:** With the `?` modifier it is possible to make a field optional. Notice that you can't set a list array optional.
 
 ```Prisma
 model User {
@@ -293,7 +293,7 @@ model User {
 Defines a multi-field ID (composite ID) on the model.
 
 - Corresponding database type: `PRIMARY KEY`
-- Can be annotated with a @default() value that uses functions to auto-generate an ID
+- Can be annotated with a `@default()` value that uses functions to auto-generate an ID
 - Cannot be optional
 - Can be defined on any scalar field (String, Int, enum)
 - Cannot be defined on a relation field
@@ -436,7 +436,7 @@ model User {
 model Post {
   id       Int  @id @default(autoincrement())
   author   User @relation(fields: [authorId], references: [id])
-  authorId Int // relation scalar field  (used in the `@relation` attribute above)
+  authorId Int
 }
 ```
 
@@ -446,7 +446,7 @@ model Post {
 
 ## Attribute functions
 
-## autoincrement()
+## autoincrement( )
 
 Create a sequence of integers in the underlying database and assign the incremented values to the ID values of the created records based on the sequence.
 
@@ -459,7 +459,7 @@ model User {
 
 ---
 
-## cuid()
+## cuid( )
 
 Generate a globally unique identifier based on the cuid spec.
 
@@ -474,7 +474,7 @@ model User {
 
 ---
 
-## uuid
+## uuid( )
 
 Generate a globally unique identifier based on the UUID spec, version 4 (random).
 
@@ -489,7 +489,7 @@ model User {
 
 ---
 
-## now()
+## now( )
 
 Set a timestamp of the time when a record is created.
 
@@ -543,7 +543,7 @@ model Post {
 
 ```
 
-In the Prism schema, the foreign key-primary key relationship is represented by the `@relation` attribute for the author field.
+In the Prisma schema, the foreign key-primary key relationship is represented by the `@relation` attribute for the author field.
 
 ### Types of relations
 
