@@ -30,6 +30,8 @@
 - [Relations](#relations)
   - [One to One Relations](#one-to-one-relations)
   - [One to many relations](#one-to-many-relations)
+  - [Many to many relations](#many-to-many-relations)
+    - [Explicit many to many relations](#explicit-many-to-many-relations)
 
 ## What is an ORM
 
@@ -580,7 +582,7 @@ model Profile {
 }
 ```
 
-You can also reference a different field. In this case, you need to mark the field with the `@unique` attribute, to guarantee that there is only a single User connected to each Profile. In the following example, the user field references an email field in the User model, which is marked with the `@unique` attribute.
+You can also reference a different field. In this case, you need to mark the field with the `@unique` attribute, to guarantee that there is only a single User connected to each Profile.
 
 ```Prisma
 model User {
@@ -622,3 +624,68 @@ model Profile {
 ---
 
 ## One to many relations
+
+One-to-many (1-n) relations refer to relations where one record on one side of the relation can be connected to zero or more records on the other side.
+
+**In the following example, there is one one-to-many relation between the User and Post models.**
+
+```Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[]
+}
+
+model Post {
+  id       Int  @id @default(autoincrement())
+  author   User @relation(fields: [authorId], references: [id])
+  authorId Int
+}
+```
+
+This one-to-many relation expresses the following:
+
+- A user can have zero or more posts
+- A post must always have an author
+
+You can also reference another field. In this case, you must tag the field with the `@unique` attribute to ensure that only a single user is associated with each post.
+
+```Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  posts Post[]
+}
+
+model Post {
+  id          Int    @id @default(autoincrement())
+  authorEmail String
+  author      User   @relation(fields: [authorEmail], references: [email])
+}
+```
+
+### Required and optional relation fields in one-to-many relations
+
+In the following example, you can create a Post without assigning a User
+
+```Prisma
+model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[]
+}
+
+model Post {
+  id       Int   @id @default(autoincrement())
+  author   User? @relation(fields: [authorId], references: [id])
+  authorId Int?
+}
+```
+
+---
+
+## Many to many relations
+
+Many-to-many (m-n) relations refer to relations where zero or more records on one side of the relation can be connected to zero or more records on the other side.
+
+> In relational databases, m-n-relations are typically modelled via relation tables. m-n-relations can be either explicit or implicit in the Prisma schema.
+
+## Explicit many to many relations
