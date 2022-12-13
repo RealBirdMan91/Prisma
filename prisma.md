@@ -38,6 +38,7 @@
     - [One to many self relations](#one-to-many-self-relations)
     - [Many to many self relations](#many-to-many-self-relations)
     - [Referential actions](#referential-actions)
+- [Prisma Client in detail](#prisma-client-in-detail)
 
 ## What is an ORM
 
@@ -772,12 +773,13 @@ model User {
   predecessor User?   @relation("BlogOwnerHistory")
 }
 ```
+
 This relation expresses the following:
 
 - "a user can have one or zero predecessors" (for example, Sarah is Mary's predecessor as blog owner)
 - "a user can have one or zero successors" (for example, Mary is Sarah's successor as blog owner)
 
->  **Note:** One-to-one self-relations cannot be made required on both sides. One or both sides must be optional, otherwise it becomes impossible to create the first User record.
+> **Note:** One-to-one self-relations cannot be made required on both sides. One or both sides must be optional, otherwise it becomes impossible to create the first User record.
 
 **To create a one-to-one self-relation:**
 
@@ -800,6 +802,7 @@ model User {
   students  User[]  @relation("TeacherStudents")
 }
 ```
+
 This relation expresses the following:
 
 - "a user has zero or one teachers "
@@ -818,6 +821,7 @@ model User {
   following  User[]  @relation("UserFollows")
 }
 ```
+
 This relation expresses the following:
 
 - "a user can be followed by zero or more users"
@@ -866,3 +870,13 @@ All referential actions can be looked up [here](https://www.prisma.io/docs/conce
 - onDelete: Restrict Prevents the deletion if any referencing records exist.
 
 - onUpdate: Restrict Prevents the identifier of a referenced record from being changed.
+
+### SetNull
+
+- onDelete: SetNull The scalar field of the referencing object will be set to NULL.
+
+- onUpdate: SetNull When updating the identifier of a referenced object, the scalar fields of the referencing objects will be set to NULL.
+
+---
+
+## Prisma Client in detail
