@@ -37,6 +37,7 @@
     - [One to one self relations](#one-to-one-self-relations)
     - [One to many self relations](#one-to-many-self-relations)
     - [Many to many self relations](#many-to-many-self-relations)
+    - [Referential actions](#referential-actions)
 
 ## What is an ORM
 
@@ -824,3 +825,44 @@ This relation expresses the following:
 
 ---
 
+## Referential actions
+
+Referential actions are policies that define how a referenced record is handled by the database when you run an update (`onUpdate`)or delete (`OnDelete`) query.
+
+In the following example, adding onDelete: Cascade to the author field on the Post model means that deleting the User record will also delete all related Post records.
+
+```Prisma
+model Post {
+  id       Int    @id @default(autoincrement())
+  title    String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId Int
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  posts Post[]
+}
+```
+
+Prisma supports the following referential actions:
+
+- Cascade
+- Restrict
+- NoAction
+- SetNull
+- SetDefault
+
+All referential actions can be looked up [here](https://www.prisma.io/docs/concepts/components/prisma-schema/relations/referential-actions)
+
+### Cascade
+
+- onDelete: Cascade Deleting a referenced record will trigger the deletion of referencing record.
+
+- onUpdate: Cascade Updates the relation scalar fields if the referenced scalar fields of the dependent record are updated.
+
+### Restrict
+
+- onDelete: Restrict Prevents the deletion if any referencing records exist.
+
+- onUpdate: Restrict Prevents the identifier of a referenced record from being changed.
