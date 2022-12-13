@@ -34,6 +34,9 @@
     - [Explicit many to many relations](#explicit-many-to-many-relations)
     - [Implicit many to many relations](#implicit-many-to-many-relations)
   - [Self relations](#self-relations)
+    - [One to one self relations](#one-to-one-self-relations)
+    - [One to many self relations](#one-to-many-self-relations)
+    - [Many to many self relations](#many-to-many-self-relations)
 
 ## What is an ORM
 
@@ -52,7 +55,7 @@ Afterwards the following development dependencies are installed.
 - @types/node
 - prisma
 
-For Typescript a ts-config.json file must be created. The contents of the file can be found in the Prisma documentation in the [quick starter guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres).
+For Typescript a tsconfig.json file must be created. The contents of the file can be found in the Prisma documentation in the [quick starter guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-typescript-postgres).
 
 ```JSON
 {
@@ -80,7 +83,7 @@ The `genorator` in the file specifies what the Prisma file should be converted t
 
 ### datasource:
 
-datasource, on the other hand, is relatively self-explanatory. It specifies which RDBMS is used, in our case PostgreSQL.
+datasource is relatively self-explanatory. It specifies which RDBMS is used, in our case PostgreSQL.
 The `url` specifies the database link. This can be found and changed in the **.env** file.
 Care must be taken to ensure that the username, password, port and database name are specified correctly.
 
@@ -166,6 +169,7 @@ model User {
 ```
 
 The command `npx prisma migrate dev --name init` is used to create the desired tables in the database based on the `model`.
+A whole example can be found [here](https://www.prisma.io/docs/concepts/components/prisma-migrate/get-started):
 
 ---
 
@@ -749,3 +753,73 @@ model Category {
 ---
 
 ## Self relations
+
+A relation field can also reference its own model, in this case the relation is called a self-relation. Self-relations can be of any cardinality, 1-1, 1-n and m-n.
+
+> Note that self-relations always require the `@relation` attribute.
+
+---
+
+## One to one self relations
+
+```Prisma
+model User {
+  id          Int     @id @default(autoincrement())
+  name        String?
+  successorId Int?    @unique
+  successor   User?   @relation("BlogOwnerHistory", fields: [successorId], references: [id])
+  predecessor User?   @relation("BlogOwnerHistory")
+}
+```
+This relation expresses the following:
+
+- "a user can have one or zero predecessors" (for example, Sarah is Mary's predecessor as blog owner)
+- "a user can have one or zero successors" (for example, Mary is Sarah's successor as blog owner)
+
+>  **Note:** One-to-one self-relations cannot be made required on both sides. One or both sides must be optional, otherwise it becomes impossible to create the first User record.
+
+**To create a one-to-one self-relation:**
+
+- Both sides of the relation must define a `@relation` attribute that share the same name - in this case, `BlogOwnerHistory`.
+
+- One relation field must be a fully annotated. In this example, the `successor` field defines both the field and references arguments.
+
+- One relation field must be backed by a foreign key. The `successor` field is backed by the `successorId` foreign key, which references a value in the id field. The `successorId` scalar relation field also requires a `@unique` attribute to guarantee a one-to-one relation.
+
+---
+
+## One to many self relations
+
+```Prisma
+model User {
+  id        Int     @id @default(autoincrement())
+  name      String?
+  teacherId Int?
+  teacher   User?   @relation("TeacherStudents", fields: [teacherId], references: [id])
+  students  User[]  @relation("TeacherStudents")
+}
+```
+This relation expresses the following:
+
+- "a user has zero or one teachers "
+
+- "a user can have zero or more students"
+
+---
+
+## Many to many self relations
+
+```Prisma
+model User {
+  id         Int     @id @default(autoincrement())
+  name       String?
+  followedBy User[]  @relation("UserFollows")
+  following  User[]  @relation("UserFollows")
+}
+```
+This relation expresses the following:
+
+- "a user can be followed by zero or more users"
+- "a user can follow zero or more users"
+
+---
