@@ -39,6 +39,11 @@
     - [Many to many self relations](#many-to-many-self-relations)
     - [Referential actions](#referential-actions)
 - [Prisma Client in detail](#prisma-client-in-detail)
+  - [CRUD](#crud)
+    - [Create](#create)
+    - [Update](#update)
+    - [Delete](#delete)
+    - [Read](#read)
 
 ## What is an ORM
 
@@ -880,3 +885,242 @@ All referential actions can be looked up [here](https://www.prisma.io/docs/conce
 ---
 
 ## Prisma Client in detail
+
+After the client has been installed via `npm install @prisma/client`, it can be imported and used in the desired controller.
+
+```Prisma
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+```
+
+> Notice that the install command automatically invokes prisma generate for you which reads your Prisma schema and generates a version of Prisma Client that is tailored to your models.<br><br>
+> Whenever you make changes to your Prisma schema in the future, you manually need to invoke prisma generate in order to accommodate the changes in your Prisma Client API (npx prisma generate).
+
+---
+
+## CRUD
+
+All examples are based on the following schema:
+
+```Prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ExtendedProfile {
+  id        Int    @id @default(autoincrement())
+  biography String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int    @unique
+}
+
+model User {
+  id           Int              @id @default(autoincrement())
+  name         String?
+  email        String           @unique
+  profileViews Int              @default(0)
+  role         Role             @default(USER)
+  coinflips    Boolean[]
+  posts        Post[]
+  profile      ExtendedProfile?
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  title      String
+  published  Boolean    @default(true)
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  comments   Json?
+  views      Int        @default(0)
+  likes      Int        @default(0)
+  categories Category[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+```
+
+---
+
+## Create
+
+The following query creates (`create` ) a single user with two fields.
+
+```Javascript
+const user = await prisma.user.create({
+  data: {
+    email: 'elsa@prisma.io',
+    name: 'Elsa Prisma',
+  },
+})
+```
+
+### Create multiple records
+
+```Javascript
+const createMany = await prisma.user.createMany({
+  data: [
+    { name: 'Bob', email: 'bob@prisma.io' },
+    { name: 'Bobo', email: 'bob@prisma.io' }, // Duplicate unique key!
+    { name: 'Yewande', email: 'yewande@prisma.io' },
+    { name: 'Angelique', email: 'angelique@prisma.io' },
+  ],
+  skipDuplicates: true, // Skip 'Bobo'
+})
+```
+
+---
+
+## Update
+
+The following query uses update to find and update a single User record by email:
+
+```Javascript
+const updateUser = await prisma.user.update({
+  where: {
+    email: 'viola@prisma.io',
+  },
+  data: {
+    name: 'Viola the Magnificent',
+  },
+})
+```
+
+### Update multiple records
+
+```Javascript
+const updateUsers = await prisma.user.updateMany({
+  where: {
+    email: {
+      contains: 'prisma.io',
+    },
+  },
+  data: {
+    role: 'ADMIN',
+  },
+})
+```
+
+### Update or create records
+
+The following query uses upsert to update a User record with a specific email address, or create that User record if it does not exist:
+
+```Javascript
+const upsertUser = await prisma.user.upsert({
+  where: {
+    email: 'viola@prisma.io',
+  },
+  update: {
+    name: 'Viola the Magnificent',
+  },
+  create: {
+    email: 'viola@prisma.io',
+    name: 'Viola the Magnificent',
+  },
+})
+```
+
+---
+
+## Delete
+
+The following query uses delete to delete a single User record:
+
+```javascript
+const deleteUser = await prisma.user.delete({
+  where: {
+    email: "bert@prisma.io",
+  },
+});
+```
+
+### Delete multiple records
+
+```Javascript
+const deleteUsers = await prisma.user.deleteMany({
+  where: {
+    email: {
+      contains: 'prisma.io',
+    },
+  },
+})
+```
+
+---
+
+## Read
+
+the following queries return a single record (findUnique ) by unique identifier or ID:
+
+```Javascript
+// By unique identifier
+const user = await prisma.user.findUnique({
+  where: {
+    email: 'elsa@prisma.io',
+  },
+})
+
+// By ID
+const user = await prisma.user.findUnique({
+  where: {
+    id: 99,
+  },
+})
+```
+
+### Get all records
+
+The following findMany query returns all User records:
+
+```Javascript
+const users = await prisma.user.findMany()
+```
+
+### Get a filtered list of records
+
+unknown filter like `endsWith` will be discussed in the filter chapter.
+
+```Javascript
+const users = await prisma.user.findMany({
+  where: {
+    email: {
+      endsWith: 'prisma.io',
+    },
+  },
+})
+```
+
+### Get the first record that matches a specific criteria
+
+```Javascript
+ const findUser = await prisma.user.findFirst({
+    where: {
+      posts: {
+        some: {
+          likes: {
+            gt: 100
+          }
+        }
+      }
+    },
+    orderBy: {
+      id: "desc"
+    }
+  })
+
+```
