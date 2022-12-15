@@ -41,9 +41,17 @@
 - [Prisma Client in detail](#prisma-client-in-detail)
   - [CRUD](#crud)
     - [Create](#create)
+      - [Create multiple records](#create-multiple-records)
     - [Update](#update)
+      - [Update multiple records](#update-multiple-records)
+      - [Update or create records](#update-or-create-records)
     - [Delete](#delete)
+      - [Delete multiple records](#delete-multiple-records)
     - [Read](#read)
+      - [Get record by ID or unique identifier](#get-record-by-id-or-unique-identifier)
+      - [Get all records](#get-all-records)
+      - [Get the first record that matches a specific criteria](#get-the-first-record-that-matches-a-specific-criteria)
+    - [Filtering and sorting](#filtering-and-sorting)
 
 ## What is an ORM
 
@@ -997,7 +1005,7 @@ const createMany = await prisma.user.createMany({
 The `update` call accepts an object as a parameter.
 This object accepts `data`, `where`, `select`, `include` as keys.
 
->The only new key is the `where` key. The other keys can be looked up in the Create chapter.
+> The only new key is the `where` key. The other keys can be looked up in the Create chapter.
 
 ```Javascript
 const updateUser = await prisma.user.update({
@@ -1009,6 +1017,7 @@ const updateUser = await prisma.user.update({
   },
 })
 ```
+
 ---
 
 ## Update multiple records
@@ -1030,6 +1039,7 @@ const updateUsers = await prisma.user.updateMany({
   },
 })
 ```
+
 ---
 
 ## Update or create records
@@ -1097,62 +1107,105 @@ const deleteUsers = await prisma.user.deleteMany({
 
 ## Read
 
-the following queries return a single record (findUnique ) by unique identifier or ID:
+## Get record by ID or unique identifier
 
-```Javascript
-// By unique identifier
+`findUnique` query lets you retrieve a single database record:
+
+- By ID
+- By a unique attribute
+
+The `findUnique` call accepts an object as a parameter.
+This object accepts `where`, `select`, `include`, `rejextOnNotFound` as keys.
+
+```javascript
 const user = await prisma.user.findUnique({
   where: {
-    email: 'elsa@prisma.io',
+    email: "elsa@prisma.io",
   },
-})
-
-// By ID
-const user = await prisma.user.findUnique({
-  where: {
-    id: 99,
-  },
-})
+  rejectOnNotFound: true,
+});
 ```
 
-### Get all records
+> findUnique replaced findOne in version.
 
-The following findMany query returns all User records:
+---
 
-```Javascript
-const users = await prisma.user.findMany()
-```
+## Get all records
 
-### Get a filtered list of records
+`findMany` returns a list of records.
 
-unknown filter like `endsWith` will be discussed in the filter chapter.
+The `findUnique` call accepts an object as a parameter.
+This object accepts `where`, `orderBy`, `skip`, `take`,
+`select`, `include`. `cursor`
 
-```Javascript
-const users = await prisma.user.findMany({
-  where: {
-    email: {
-      endsWith: 'prisma.io',
-    },
-  },
-})
-```
+1. `orderBy`: Lets you order the returned list by any property.
 
-### Get the first record that matches a specific criteria
+   ```Javascript
+   const users = await prisma.user.findMany({
+   orderBy: {
+     name: "asc"
+   }
+   })
+   ```
 
-```Javascript
- const findUser = await prisma.user.findFirst({
-    where: {
-      posts: {
-        some: {
-          likes: {
-            gt: 100
-          }
-        }
-      }
-    },
+2. `skip`: Specifies how many of the returned objects in the list should be skipped.
+
+   ```Javascript
+   const users = await prisma.user.findMany({
     orderBy: {
-      id: "desc"
-    }
-  })
+      name: "asc"
+    },
+    skip: 2
+   })
+   ```
 
-```
+3. `take`: Specifies how many objects should be returned in the list (as seen from the beginning (positive value) or end (negative value) either of the list or from the cursor position if mentioned)
+
+   ```Javascript
+   const users = await prisma.user.findMany({
+    orderBy: {
+      name: "asc"
+    },
+    skip: 2,
+    take: 1
+   })
+   ```
+
+---
+
+## Get the first record that matches a specific criteria
+
+`findFirst` returns the first record in a list that matches your criteria.
+
+The `findFirst` call accepts an object as a parameter.
+This object accepts `distinct`, `where`, `orderBy`, `include`,
+`select`, `skip`, `take`, `cursor`, `rejectOnNotFound`
+
+1. `cursor`: Specifies the position for the list (the value typically specifies an id or another unique value).
+
+   ```javascript
+   const user = await prisma.user.findFirst({
+     where: {
+       email: "user@example.com",
+     },
+     cursor: {
+       email: "user@example.com",
+     },
+   });
+   ```
+
+   In this example, the `findFirst` function is used to query for the first user that matches the given `where` condition (i.e. the user with the email user@example.com). The cursor argument is used to specify the starting point for the query. In this case, the query will start from the user with the email user@example.com and return the first user that matches the `where` condition after that user.
+
+2. `distinct`: Lets you filter out duplicate rows by a specific field - for example, return only distinct Post titles.
+
+    ```Javascript
+     const user = await prisma.user.findFirst({
+        where: {
+          // specify filter conditions here
+        },
+        distinct: true,
+      });
+    ```
+
+---    
+## Filtering and sorting
