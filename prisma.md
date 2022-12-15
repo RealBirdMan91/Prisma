@@ -1189,32 +1189,6 @@ The `findFirst` call accepts an object as a parameter.
 This object accepts `distinct`, `where`, `orderBy`, `include`,
 `select`, `skip`, `take`, `cursor`, `rejectOnNotFound`
 
-1. `cursor`: Specifies the position for the list (the value typically specifies an id or another unique value).
-
-   ```javascript
-   const user = await prisma.user.findFirst({
-     where: {
-       email: "user@example.com",
-     },
-     cursor: {
-       email: "user@example.com",
-     },
-   });
-   ```
-
-   In this example, the `findFirst` function is used to query for the first user that matches the given `where` condition (i.e. the user with the email user@example.com). The cursor argument is used to specify the starting point for the query. In this case, the query will start from the user with the email user@example.com and return the first user that matches the `where` condition after that user.
-
-2. `distinct`: Lets you filter out duplicate rows by a specific field - for example, return only distinct Post titles.
-
-   ```Javascript
-    const user = await prisma.user.findFirst({
-       where: {
-         // specify filter conditions here
-       },
-       distinct: true,
-     });
-   ```
-
 ---
 
 ## Filtering and sorting
