@@ -969,7 +969,12 @@ This object accepts `data`, `select` and `include` as keys.
 
 ---
 
-### Create multiple records
+## Create multiple records
+
+`createMany` creates multiple records in a transaction.
+
+The `createMany` call accepts an object as a parameter.
+This object accepts `data` and `skipDuplicates` as keys.
 
 ```Javascript
 const createMany = await prisma.user.createMany({
@@ -987,7 +992,12 @@ const createMany = await prisma.user.createMany({
 
 ## Update
 
-The following query uses update to find and update a single User record by email:
+`update` updates an existing database record.
+
+The `update` call accepts an object as a parameter.
+This object accepts `data`, `where`, `select`, `include` as keys.
+
+>The only new key is the `where` key. The other keys can be looked up in the Create chapter.
 
 ```Javascript
 const updateUser = await prisma.user.update({
@@ -999,8 +1009,14 @@ const updateUser = await prisma.user.update({
   },
 })
 ```
+---
 
-### Update multiple records
+## Update multiple records
+
+`updateMany` updates a batch of existing database records in bulk and returns the number of updated records.
+
+The `updateMany` call accepts an object as a parameter.
+This object accepts `data`, `where` as keys.
 
 ```Javascript
 const updateUsers = await prisma.user.updateMany({
@@ -1014,10 +1030,17 @@ const updateUsers = await prisma.user.updateMany({
   },
 })
 ```
+---
 
-### Update or create records
+## Update or create records
 
-The following query uses upsert to update a User record with a specific email address, or create that User record if it does not exist:
+upsert does the following:
+
+- If an existing database record satisfies the where condition, it updates that record
+- If no database record satisfies the where condition, it creates a new database record
+
+The `upsert` call accepts an object as a parameter.
+This object accepts `create`, `update`, `where`, `select`, `include` as keys.
 
 ```Javascript
 const upsertUser = await prisma.user.upsert({
