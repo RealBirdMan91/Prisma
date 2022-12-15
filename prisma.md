@@ -1061,17 +1061,27 @@ const upsertUser = await prisma.user.upsert({
 
 ## Delete
 
-The following query uses delete to delete a single User record:
+delete deletes an existing database record. You can delete a record:
+
+- By ID
+- By a unique attribute
+
+The `delete` call accepts an object as a parameter.
+This object accepts `where`, `select`, `include` as keys.
 
 ```javascript
 const deleteUser = await prisma.user.delete({
   where: {
-    email: "bert@prisma.io",
+    email: "elsa@prisma.io",
   },
 });
 ```
 
-### Delete multiple records
+---
+
+## Delete multiple records
+
+The following query uses deleteMany to delete all User records where email contains prisma.io:
 
 ```Javascript
 const deleteUsers = await prisma.user.deleteMany({
