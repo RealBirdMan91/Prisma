@@ -52,6 +52,14 @@
       - [Get all records](#get-all-records)
       - [Get the first record that matches a specific criteria](#get-the-first-record-that-matches-a-specific-criteria)
     - [Filtering and sorting](#filtering-and-sorting)
+      - [not](#not)
+      - [in](#in)
+      - [notIn](#notin)
+      - [lt](#lt)
+      - [gt](#gt)
+      - [contains](#contains)
+      - [startsWith](#startswith)
+      - [endsWith](#endswith)
 
 ## What is an ORM
 
@@ -1198,14 +1206,202 @@ This object accepts `distinct`, `where`, `orderBy`, `include`,
 
 2. `distinct`: Lets you filter out duplicate rows by a specific field - for example, return only distinct Post titles.
 
-    ```Javascript
-     const user = await prisma.user.findFirst({
-        where: {
-          // specify filter conditions here
-        },
-        distinct: true,
-      });
-    ```
+   ```Javascript
+    const user = await prisma.user.findFirst({
+       where: {
+         // specify filter conditions here
+       },
+       distinct: true,
+     });
+   ```
 
----    
+---
+
 ## Filtering and sorting
+
+Prisma Client allows you to filter records on any combination of model fields, including related models, and supports a variety of filter conditions.
+
+For this purpose, Prisma provides a variety of filter conditions and operators.
+
+**Filter conditions and operators:**
+
+---
+
+## not
+
+Return all users where name does not equal "Eleanor"
+
+```Javascript
+const result = await prisma.user.findMany({
+  where: {
+    name: {
+      not: 'Eleanor',
+    },
+  },
+})
+```
+
+---
+
+## in
+
+Value n exists in list.
+
+Get User records where the name can be found in the following list: `['Saqui', 'Clementine', 'Bob']`.
+
+```Javascript
+const getUser = await prisma.user.findMany({
+  where: {
+    name: { in: ['Saqui', 'Clementine', 'Bob'] },
+  },
+})
+```
+
+---
+
+## notIn
+
+Value n does not exist in list.
+
+Get User records where the id can not be found in the following list: [22, 91, 14, 2, 5]
+
+```Javascript
+const getUser = await prisma.user.findMany({
+  where: {
+    id: { notIn: [22, 91, 14, 2, 5] },
+  },
+})
+```
+
+---
+
+## lt
+
+Value n is less than x.
+
+Get all Post records where likes is less than 9.
+
+```Javascript
+const getPosts = await prisma.post.findMany({
+  where: {
+    likes: {
+      lt: 9,
+    },
+  },
+})
+```
+
+## lte
+
+Value n is less than or equal to x.
+
+Get all Post records where likes is less or equal to 9
+
+```Javascript
+const getPosts = await prisma.post.findMany({
+  where: {
+    likes: {
+      lte: 9,
+    },
+  },
+})
+```
+
+---
+
+## gt
+
+Value n is greater than x.
+
+Get all Post records where likes is greater than 9
+
+```Javascript
+const getPosts = await prisma.post.findMany({
+  where: {
+    likes: {
+      gt: 9,
+    },
+  },
+})
+```
+
+## gte
+
+Value n is greater than or equal to x.
+
+Get all Post records where likes is greater than or equal to 9
+
+```Javascript
+const getPosts = await prisma.post.findMany({
+  where: {
+    likes: {
+      gte: 9,
+    },
+  },
+})
+```
+
+---
+
+## contains
+
+Value n contains x.
+
+1. Count all Post records where content contains databases
+
+   ```Javascript
+   const result = await prisma.post.count({
+     where: {
+       content: {
+         contains: 'databases',
+       },
+     },
+   })
+   ```
+
+2. Count all Post records where content does not contain databases
+   ```Javascript
+   const result = await prisma.post.count({
+     where: {
+       NOT: {
+         content: {
+           contains: 'databases',
+           mode: 'insensitive' // searches in case insensitive way
+         },
+       },
+     },
+   })
+   ```
+
+---
+
+## startsWith
+
+Get all Post records where title starts with Pr (such as Prisma)
+
+```Javascript
+const result = await prisma.post.findMany({
+  where: {
+    title: {
+      startsWith: 'Pr',
+    },
+  },
+})
+```
+
+---
+
+## endsWith
+
+Get all User records where email ends with prisma.io
+
+```Javascript
+const result = await prisma.user.findMany({
+  where: {
+    email: {
+      endsWith: 'prisma.io',
+    },
+  },
+})
+```
+---

@@ -4,18 +4,19 @@ const prisma = new PrismaClient();
 
 async function main() {
   const users = await prisma.user.findMany({
-    orderBy: {
-      name: "asc"
+    where: {
+      email: {
+        contains: "prisma",
+        mode: 'insensitive'
+      },
     },
-    skip: 2,
-    take: 1
-  })
-    console.log(users);
+  });
+  console.log(users);
 }
 
 main()
   .catch((e) => {
-    console.log(e.message)
+    console.log(e.message);
   })
   .finally(async () => {
     await prisma.$disconnect();
