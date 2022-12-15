@@ -901,74 +901,73 @@ const prisma = new PrismaClient()
 
 ## CRUD
 
-All examples are based on the following schema:
-
-```Prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model ExtendedProfile {
-  id        Int    @id @default(autoincrement())
-  biography String
-  user      User   @relation(fields: [userId], references: [id])
-  userId    Int    @unique
-}
-
-model User {
-  id           Int              @id @default(autoincrement())
-  name         String?
-  email        String           @unique
-  profileViews Int              @default(0)
-  role         Role             @default(USER)
-  coinflips    Boolean[]
-  posts        Post[]
-  profile      ExtendedProfile?
-}
-
-model Post {
-  id         Int        @id @default(autoincrement())
-  title      String
-  published  Boolean    @default(true)
-  author     User       @relation(fields: [authorId], references: [id])
-  authorId   Int
-  comments   Json?
-  views      Int        @default(0)
-  likes      Int        @default(0)
-  categories Category[]
-}
-
-model Category {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  posts Post[]
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-```
+All examples of CRUD operations are based on the [following scheme](./project-one/prisma/schema.prisma) in the project-one folder.
 
 ---
 
 ## Create
 
-The following query creates (`create` ) a single user with two fields.
+The method call `create` can be used to create a new record in the database.
 
-```Javascript
-const user = await prisma.user.create({
-  data: {
-    email: 'elsa@prisma.io',
-    name: 'Elsa Prisma',
-  },
-})
-```
+The `create` call accepts an object as a parameter.
+This object accepts `data`, `select` and `include` as keys.
+
+1. `data`: Wraps all the model fields in a type so that they can be provided when creating new records. It also includes relation fields which lets you perform (transactional) nested inserts.
+
+   ```Javascript
+   const user = await prisma.user.create({
+   data: {
+     email: 'elsa@prisma.io',
+     name: 'Elsa Prisma',
+     profile: {
+       create: {
+         biography: 'Some biograpy data'
+       }
+     }
+   }
+   })
+   ```
+
+2. `select`: Specifies which properties to include on the returned object.
+
+   ```Javascript
+   const user = await prisma.user.create({
+    data: {
+      email: 'bernd@prisma.io',
+      name: 'bernd Prisma',
+      profile: {
+        create: {
+          biography: 'Some nother biograpy data'
+        }
+      }
+    },
+    select: {
+      email: true,
+      id: true
+    }
+   })
+   ```
+
+3. `include`: Specifies which relations should be eagerly loaded on the returned object.
+
+   ```Javascript
+   await prisma.user.create({
+    data: {
+      email: 'marion@prisma.io',
+      name: 'marion Prisma',
+      profile: {
+        create: {
+          biography: 'Some nother biograpy data'
+        }
+      }
+    },
+    include: {
+      profile: true
+    }
+   })
+   ```
+
+---
 
 ### Create multiple records
 
