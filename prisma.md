@@ -919,6 +919,8 @@ const prisma = new PrismaClient()
 ---
 
 ## CRUD
+All Prisma Client API references for query or filtering data can be looked up [here](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#not-1)
+
 
 All examples of CRUD operations are based on the [following scheme](./project-one/prisma/schema.prisma) in the project-one folder.
 
@@ -985,6 +987,8 @@ This object accepts `data`, `select` and `include` as keys.
     }
    })
    ```
+
+> The example above shows that nested queries are possible in Prisma. Everything about nested queries can be read [here](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#create-1).
 
 ---
 
@@ -1209,9 +1213,9 @@ Prisma Client allows you to filter records on any combination of model fields, i
 
 For this purpose, Prisma provides a variety of filter conditions and operators.
 
-**Filter conditions and operators:**
-
 ---
+
+## Filter conditions and operators:
 
 ## not
 
