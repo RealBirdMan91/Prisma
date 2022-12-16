@@ -1013,8 +1013,6 @@ const createMany = await prisma.user.createMany({
 The `update` call accepts an object as a parameter.
 This object accepts `data`, `where`, `select`, `include` as keys.
 
-> The only new key is the `where` key. The other keys can be looked up in the Create chapter.
-
 ```Javascript
 const updateUser = await prisma.user.update({
   where: {
@@ -1099,6 +1097,8 @@ const deleteUser = await prisma.user.delete({
 
 ## Delete multiple records
 
+The `delete` call accepts an object as a parameter. This object accepts `where` as keys.
+
 The following query uses deleteMany to delete all User records where email contains prisma.io:
 
 ```Javascript
@@ -1142,9 +1142,8 @@ const user = await prisma.user.findUnique({
 
 `findMany` returns a list of records.
 
-The `findUnique` call accepts an object as a parameter.
-This object accepts `where`, `orderBy`, `skip`, `take`,
-`select`, `include`. `cursor`
+The `findMany` call accepts an object as a parameter.
+This object accepts `where`, `orderBy`, `skip`, `cursor`, `take`, `select`, `include`, `distinct`
 
 1. `orderBy`: Lets you order the returned list by any property.
 
