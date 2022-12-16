@@ -60,6 +60,9 @@
       - [contains](#contains)
       - [startsWith](#startswith)
       - [endsWith](#endswith)
+      - [AND](#and)
+      - [OR](#or)
+      - [NOT](#not)
 
 ## What is an ORM
 
@@ -1143,7 +1146,7 @@ const user = await prisma.user.findUnique({
 `findMany` returns a list of records.
 
 The `findMany` call accepts an object as a parameter.
-This object accepts `where`, `orderBy`, `skip`, `cursor`, `take`, `select`, `include`, `distinct`
+This object accepts `where`, `orderBy`, `skip`, `cursor`, `take`, `select`, `include`
 
 1. `orderBy`: Lets you order the returned list by any property.
 
@@ -1184,9 +1187,19 @@ This object accepts `where`, `orderBy`, `skip`, `cursor`, `take`, `select`, `inc
 
 `findFirst` returns the first record in a list that matches your criteria.
 
-The `findFirst` call accepts an object as a parameter.
-This object accepts `distinct`, `where`, `orderBy`, `include`,
-`select`, `skip`, `take`, `cursor`, `rejectOnNotFound`
+This object accepts `where`, `orderBy`, `include`,
+`select`, `skip`, `take`, `cursor`, `rejectOnNotFound` as Parameter.
+
+```Javascript
+ const users = await prisma.user.findFirst({
+    where: {
+      email: {
+        contains: "prisma",
+        mode: 'insensitive'
+      },
+    },
+  });
+```
 
 ---
 
@@ -1378,3 +1391,92 @@ const result = await prisma.user.findMany({
 })
 ```
 ---
+## AND
+All conditions must return true. Alternatively, pass a list of objects into the where clause - the `AND` operator is not required.
+
+```Javascript
+const result = await prisma.post.findMany({
+  where: {
+    AND: [
+      {
+        content: {
+          contains: 'Prisma',
+        },
+      },
+      {
+        published: {
+          equals: false,
+        },
+      },
+    ],
+  },
+})
+```
+The following format returns the same results as the previous example without the AND operator:
+
+```Javascript
+const result = await prisma.post.findMany({
+  where: {
+    content: {
+      contains: 'Prisma',
+    },
+    published: {
+      equals: false,
+    },
+  },
+})
+```
+---
+## OR
+Get all Post records where the title field contains Prisma or databases
+
+```javascript
+const result = await prisma.post.findMany({
+  where: {
+    OR: [
+      {
+        title: {
+          contains: 'Prisma',
+        },
+      },
+      {
+        title: {
+          contains: 'databases',
+        },
+      },
+    ],
+  },
+})
+```
+---
+
+## NOT
+All conditions must return false.
+
+```Javascript
+const result = await prisma.post.findMany({
+  where: {
+    OR: [
+      {
+        title: {
+          contains: 'Prisma',
+        },
+      },
+      {
+        title: {
+          contains: 'databases',
+        },
+      },
+    ],
+    NOT: {
+      title: {
+        contains: 'SQL',
+      },
+    },
+  },
+})
+```
+
+
+
+
